@@ -1,37 +1,53 @@
-# N8N-automation-for-news
-This N8N workflow uses rss feed from news sites to provide summarized news on a discord channel.
 DISCORD FOR NEWS
 Overview
-This n8n automation named DISCORD FOR NEWS reads news from an RSS feed (https://www.cbsnews.com/latest/rss/world) and limits the number of news items processed to 5. It uses a language model chain connected to an Ollama chat model to summarize news content in a small paragraph. Finally, it sends the summarized news to a specified Discord channel via a webhook. The workflow can be triggered on a schedule, but the schedule trigger is disabled by default.
+This n8n automation streams the latest world news from CBS News RSS feed, summarizes the content using a powerful language model, and posts concise news updates directly to a Discord channel via webhook. It enables real-time news delivery in Discord servers with automated summarization of complex news articles into brief paragraphs.
 
-Workflow Details
-Schedule Trigger: Disabled by default; can be enabled to automate the workflow at desired intervals.
+##How It Works##
 
-RSS Read: Fetches latest world news from CBS News RSS feed.
+Fetches news from the RSS feed: https://www.cbsnews.com/latest/rss/world.
 
-Limit: Limits processing to 5 news items per run to control load.
+Limits to the top 5 news articles to keep messages concise and manageable.
 
-Basic LLM Chain: Uses a language model to generate a concise summary from the news content.
+Summarizes each article into a small paragraph using a connected language model (llama3.2:1b via Ollama).
 
-Ollama Chat Model: Provides the language model backend (llama3.2:1b) for the summarization.
+Sends the generated summaries to a specified Discord channel using a webhook integration.
 
-Discord: Sends the summarized text to a Discord channel using a webhook for real-time news updates.
+##Features##
 
-Setup Instructions
-Configure the Discord Webhook credentials in the Discord node.
+Discord webhook integration: Seamless posting of summaries into Discord chats.
 
-Enable and configure the Schedule Trigger node according to preferred intervals to automate.
+AI-powered summarization: Uses an LLM chain with Ollama chat model to condense news content.
 
-Test the workflow to verify summary posts are sent to your Discord channel.
+Configurable schedule trigger: Automate news fetching and posting at preferred intervals (disabled by default).
 
-Adjust the RSS feed URL if you want news from different sources or categories.
+Item limit control: Manage how many news pieces get posted per run for channel clarity.
 
-Modify the max items parameter in the Limit node to control the number of summaries per run.
+##Setup Instructions##
 
-Notes
-The Schedule Trigger node is disabled by default.
+Create a Discord webhook URL for the channel you want to post the news in.
 
-The automation processes up to 5 news items per run.
+Configure the Discord node in n8n with your webhook credentials.
 
-Summaries are generated using a prompt instructing the model to create a short paragraph without further questions.
+(Optional) Enable and schedule the trigger node to automate news updates.
 
+Run the workflow manually to verify messages appear in Discord.
+
+Customize the RSS feed or summary prompt as needed.
+
+##Usage Tips for Discord##
+
+Adjust the summary prompt to match your Discord community’s tone — concise, formal, or casual.
+
+Set an appropriate schedule to avoid flooding the channel with too many updates.
+
+Use Discord message formatting (Markdown) if you want enhanced readability.
+
+Consider adding additional nodes for filtering or enriching news before posting to Discord.
+
+##Notes##
+
+The schedule trigger node is disabled by default; enable it to automate.
+
+The automation currently processes up to 5 news items each execution.
+
+Summary generation is designed to produce brief, clear paragraphs without unnecessary questions.
