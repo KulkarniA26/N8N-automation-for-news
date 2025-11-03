@@ -1,0 +1,473 @@
+{
+  "name": "DISCORD FOR NEWS",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 7
+            },
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2608,
+        592
+      ],
+      "id": "5ae4e5ee-ba08-4db4-9391-9f04f44a558c",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://rss.app/feeds/GfdG4QmS4JeQPhOa.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -1984,
+        192
+      ],
+      "id": "9767e42e-f51d-4600-b05b-fd29ae1d4c76",
+      "name": "BCG"
+    },
+    {
+      "parameters": {
+        "url": "http://feeds.harvardbusiness.org/harvardbusiness/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -1984,
+        592
+      ],
+      "id": "53ff4c43-8c14-47ce-a06b-9aa064b7972b",
+      "name": "HBR"
+    },
+    {
+      "parameters": {
+        "url": "https://www.mckinsey.com/insights/rss",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -1984,
+        992
+      ],
+      "id": "116596e1-5338-4e52-a255-5c4c38447465",
+      "name": "McKinsey"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        992
+      ],
+      "id": "68f65982-ba45-4f67-a26b-c3d3940397a6",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        592
+      ],
+      "id": "a8811d3e-274a-4fb4-baef-6e93ac762b34",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        192
+      ],
+      "id": "6a58f8ed-bbf4-4723-932d-488e228f3436",
+      "name": "Limit2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.link }}\n{{ $json.pubDate }}\n{{ $json.content }}\n{{ $json.contentSnippet }}",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "Given RSS feed containing articles from various domains, analyze the content of the latest articles from each feed. Summarize all the articles and provide a brief summary with one paragraph.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -1552,
+        144
+      ],
+      "id": "b6c06157-9ee1-482e-a2c2-319dc1e4948d",
+      "name": "BCG TOP 5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.link }}\n{{ $json.pubDate }}\n",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "Given RSS feed containing articles from various domains, analyze the content of the latest articles from each feed. Summarize all the articles and provide a brief summary with one paragraph.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -1552,
+        576
+      ],
+      "id": "de936f62-33d9-4628-9c3f-3cdb9ef24c42",
+      "name": "HBR TOP 5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.link }}\n{{ $json.pubDate }}\n{{ $json.content }}\n{{ $json.contentSnippet }}",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "Given RSS feed containing articles from various domains, analyze the content of the latest articles from each feed. Summarize all the articles and provide a brief summary with one paragraph.\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -1536,
+        992
+      ],
+      "id": "df9e8ff6-9e76-4fba-8920-ea1144ca60d2",
+      "name": "MCKinsey Top 5"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{ $('BCG').item.json.isoDate }}\n{{ $('BCG').item.json.title }}\n{{ $('BCG').item.json.link }}\n\n{{ $json.text }}\n\n{{ $('HBR').item.json.isoDate }}\n{{ $('HBR').item.json.title }}\n{{ $('HBR').item.json.link }}\n\n{{ $json.text }}\n\n\n\n{{ $('McKinsey').item.json.pubDate }}\n{{ $('McKinsey').item.json.title }}\n{{ $('McKinsey').item.json.link }}\n\n{{ $json.text }}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -1184,
+        192
+      ],
+      "id": "09ce4977-1b22-4b75-9669-79f285ad4374",
+      "name": "BCG Articles",
+      "webhookId": "00bb675b-233d-4d11-9f07-dedb39d368b0",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "Th6isUX4IwCkv6By",
+          "name": "Discord Webhook account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{ $('HBR').item.json.isoDate }}\n{{ $('HBR').item.json.title }}\n{{ $('HBR').item.json.link }}\n\n{{ $json.text }}\n\n\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -1184,
+        592
+      ],
+      "id": "9f9cd5af-c665-41c2-a1ee-9b651e21b075",
+      "name": "HBR Articles",
+      "webhookId": "00bb675b-233d-4d11-9f07-dedb39d368b0",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "Th6isUX4IwCkv6By",
+          "name": "Discord Webhook account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=\n{{ $('McKinsey').item.json.pubDate }}\n{{ $('McKinsey').item.json.title }}\n{{ $('McKinsey').item.json.link }}\n\n{{ $json.text }}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -1184,
+        992
+      ],
+      "id": "ad6ee6e3-0c8c-4847-a314-bb5329e07eb0",
+      "name": "McKinsey Articles",
+      "webhookId": "00bb675b-233d-4d11-9f07-dedb39d368b0",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "Th6isUX4IwCkv6By",
+          "name": "Discord Webhook account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "nvidia/nemotron-nano-12b-v2-vl:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        816
+      ],
+      "id": "d8904648-f224-4359-a969-2cf012abe23c",
+      "name": "Gemma 3",
+      "credentials": {
+        "openRouterApi": {
+          "id": "CNQEnOqZTfHYdJ7t",
+          "name": "OpenRouter account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -1408,
+        336
+      ],
+      "id": "fece2290-eb17-4ada-8007-06f5aee41e89",
+      "name": "GPT-OSS",
+      "credentials": {
+        "openRouterApi": {
+          "id": "CNQEnOqZTfHYdJ7t",
+          "name": "OpenRouter account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen3-vl:235b-cloud",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        1216
+      ],
+      "id": "92c256e8-330f-4289-88fd-cde8b8970bf9",
+      "name": "QWEN3",
+      "credentials": {
+        "ollamaApi": {
+          "id": "Dsfm3OQKeAE55TZj",
+          "name": "Ollama account 5"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "BCG",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HBR",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "McKinsey",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BCG": {
+      "main": [
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HBR": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "McKinsey": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "MCKinsey Top 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "HBR TOP 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit2": {
+      "main": [
+        [
+          {
+            "node": "BCG TOP 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BCG TOP 5": {
+      "main": [
+        [
+          {
+            "node": "BCG Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HBR TOP 5": {
+      "main": [
+        [
+          {
+            "node": "HBR Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCKinsey Top 5": {
+      "main": [
+        [
+          {
+            "node": "McKinsey Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BCG Articles": {
+      "main": [
+        []
+      ]
+    },
+    "Gemma 3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "HBR TOP 5",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-OSS": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "BCG TOP 5",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QWEN3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "MCKinsey Top 5",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2b8d92fd-1e2e-4873-81dc-3264dfebb4bc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6dcbdb6bb5f634a7c73f1460e307f883aebbeb5dee2d5efe3859e0bb3a7bdead"
+  },
+  "id": "lV2yWuRNYETziW6P",
+  "tags": []
+}
